@@ -1,7 +1,11 @@
 const express = require("express");
-const app = express();
 const { Pool } = require("pg");
+const bodyParser = require("body-parser");
+
+const app = express();
 const port = 3000;
+
+app.use(bodyParser.urlencoded());
 
 // Configurating The connection between my server and the database
 const pool = new Pool({
@@ -23,6 +27,17 @@ app.get("/:id", (req, res) => {
   const { id } = req.params;
   pool // We're using the instance connected to the DB
     .query("SELECT * FROM users WHERE id=$1;", [id])
+    .then((data) => res.json(data)) // We can send the data as a JSON
+    .catch((e) => res.sendStatus(404)); // In case of problem we send an HTTP code
+});
+
+app.post("/", (req, res) => {
+  const { first_name, last_name, age } = req.body;
+  pool // We're using the instance connected to the DB
+    .query(
+      "INSERT INTO users (first_name, last_name, age) VALUES ($1, $2, $3);",
+      [first_name, last_name, age]
+    )
     .then((data) => res.json(data)) // We can send the data as a JSON
     .catch((e) => res.sendStatus(404)); // In case of problem we send an HTTP code
 });
