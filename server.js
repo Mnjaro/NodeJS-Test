@@ -12,6 +12,13 @@ const pool = new Pool({
   port: 5432,
 });
 
+app.get("/", (req, res) => {
+  pool // We're using the instance connected to the DB
+    .query("SELECT * FROM users;")
+    .then((data) => res.json(data)) // We can send the data as a JSON
+    .catch((e) => res.sendStatus(404)); // In case of problem we send an HTTP code
+});
+
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
