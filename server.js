@@ -19,6 +19,14 @@ app.get("/", (req, res) => {
     .catch((e) => res.sendStatus(404)); // In case of problem we send an HTTP code
 });
 
+app.get("/:id", (req, res) => {
+  const { id } = req.params;
+  pool // We're using the instance connected to the DB
+    .query("SELECT * FROM users WHERE id=$1;", [id])
+    .then((data) => res.json(data)) // We can send the data as a JSON
+    .catch((e) => res.sendStatus(404)); // In case of problem we send an HTTP code
+});
+
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
